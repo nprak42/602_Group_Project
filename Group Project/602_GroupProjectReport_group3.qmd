@@ -196,23 +196,14 @@ exp_data_coded$IV_rank <- as.factor(exp_data$IV_rank)
 anova_dv1 <- aov(dv1 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv1)
 
-# Calculate eta-squared
-etaSquared(anova_dv1, type = 2)
-
 
 
 anova_dv2 <- aov(dv2 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv2)
 
-# Calculate eta-squared
-etaSquared(anova_dv2, type = 2)
-
 
 anova_dv3 <- aov(dv3 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv3)
-
-# Calculate eta-squared
-etaSquared(anova_dv3, type = 2)
 
 ```
 
