@@ -1,0 +1,292 @@
+---
+title: "Associations between confidence during a job search and strength of social capital"
+subtitle: "DACSS 602 (Fall 2024)"
+author: Astrid van Haren, Pengyang Li and Niranjan Prakash
+format: 
+  html:
+    toc: true
+    toc-depth: 2
+    toc-title: Contents
+    toc-location: left
+    html-math-method: katex
+    theme: flatly
+    smooth-scroll: true
+    link-external-icon: true
+    link-external-newwindow: true
+    citations-hover: true
+    footnotes-hover: true
+    font-size: 80%
+---
+
+<!--
+ATTENTION: Please submit both your .qmd file and the corresponding ".html" file after rendering.
+-->
+
+
+<!--
+Replace the placeholders (title and author) in the yaml above with your own.
+-->
+
+
+# Introduction
+<!--
+What is your experiment about (4-5 sentences).
+-->
+
+# Methodology
+<!--
+Describe your experiment design, including: (1) experiment design, (2) treatments, (3) outcome variable(s), (4) sample size, and (5) data cleaning procedures (if applicable) [8-10 sentences]
+-->
+
+# Analysis
+
+<!--
+Which statistical test is used, and why? [3-4 sentences]
+Factorial ANOVA- have 2 levels of IV and 3 dv's
+-->
+
+<!--
+Run the chosen test! To do so: (1) import the libraries you need, (2) import your data, (3) double-check the names of your IV(s) and DV, and (4) run the test. For information on the libraries and R syntax, refer to see Lecture 10.
+-->
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyr)
+library(dplyr)
+library(readxl)
+library(haven)
+library(stringr) 
+library(ggplot2) 
+
+
+exp_data <- read_csv("fa24_g3.csv")
+
+
+
+summary_entire_demo <- exp_data |> 
+  summarise(
+    mean_age = mean(age, na.rm = TRUE),
+    median_age = median(age, na.rm = TRUE),
+    gender_dist = mean(gender, na.rm = TRUE),
+    mean_hhi = mean(hhi, na.rm = TRUE),
+    mean_ethnicity = mean(ethnicity, na.rm = TRUE),
+    mean_hispanic = mean(hispanic, na.rm = TRUE),
+    mean_education = mean(education, na.rm = TRUE)
+  )
+
+
+summary_IV_rank <- exp_data |> 
+  group_by(IV_rank) |>
+  summarise(
+    mean_age = mean(age, na.rm = TRUE),
+    gender_distribution = mean(gender, na.rm = TRUE),
+    mean_hhi = mean(hhi, na.rm = TRUE),
+    mean_ethnicity = mean(ethnicity, na.rm = TRUE),
+    mean_hispanic = mean(hispanic, na.rm = TRUE),
+    mean_education = mean(education, na.rm = TRUE),
+    count = n()
+  )
+
+summary_IV_closeness <- exp_data |> 
+  group_by(IV_closeness) |>
+  summarise(
+    mean_age = mean(age, na.rm = TRUE),
+    gender_distribution = mean(gender, na.rm = TRUE),
+    mean_hhi = mean(hhi, na.rm = TRUE),
+    mean_ethnicity = mean(ethnicity, na.rm = TRUE),
+    mean_hispanic = mean(hispanic, na.rm = TRUE),
+    mean_education = mean(education, na.rm = TRUE),
+    count = n()
+  )
+
+ggplot(exp_data) + 
+  geom_bar(aes(x = as.factor(dv1)))
+
+#data recoding
+
+exp_data_coded <- exp_data |> 
+  mutate(dv1 = recode(dv1,
+                     "Not confident at all" = 1,
+                     "Slightly confident" = 2,
+                     "Somewhat confident" = 3,
+                     "Moderately confident" = 4,
+                     "Very confident" = 5,
+                     "Fully confident" = 7,
+                     "Extremely confident" = 6),
+         
+         dv2 = recode(dv2,
+                     "Strongly disagree" = 1,
+                     "Disagree" = 2,
+                     "Somewhat disagree" = 3,
+                     "Neutral" = 4,
+                     "Somewhat agree" = 5,
+                     "Agree" = 6,
+                     "Strongly agree" = 7,
+                     "Not confident at all" = 1,
+                     "Slightly confident" = 2,
+                     "Somewhat confident" = 3,
+                     "Moderately confident" = 4,
+                     "Very confident" = 5,
+                     "Fully confident" = 7,
+                     "Extremely confident" = 6),
+         
+         dv3 = recode(dv3, 
+                     "Not at all" = 1,
+                     "A little" = 2,
+                     "Somewhat" = 3,
+                     "Moderately" = 4,
+                     "Very much" = 5,
+                     "Extremely" = 6,
+                     "Completely" = 7,
+                     "Not confident at all" = 1,
+                     "Slightly confident" = 2,
+                     "Somewhat confident" = 3,
+                     "Moderately confident" = 4,
+                     "Very confident" = 5,
+                     "Fully confident" = 7,
+                     "Extremely confident" = 6))
+```
+
+
+```   {r}
+
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv1,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV1",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
+
+
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv2,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV1",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
+
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv3,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV1",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
+
+```
+
+
+```{r}
+
+library(lsr)
+exp_data_coded$IV_closeness <- as.factor(exp_data$IV_closeness)
+exp_data_coded$IV_rank <- as.factor(exp_data$IV_rank)
+
+
+anova_dv1 <- aov(dv1 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv1)
+
+# Calculate eta-squared
+etaSquared(anova_dv1, type = 2)
+
+
+
+anova_dv2 <- aov(dv2 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv2)
+
+# Calculate eta-squared
+etaSquared(anova_dv2, type = 2)
+
+
+anova_dv3 <- aov(dv3 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv3)
+
+# Calculate eta-squared
+etaSquared(anova_dv3, type = 2)
+
+```
+
+
+# Results
+<!--
+Report and interpret the test results. For information on what should be included, refer to lecture 10. Also add at least one plot.
+-->
+
+
+
+
+# Findings
+<!--
+Findings: Report the statistic you obtained along with the information to decide whether the null hypothesis can be rejected or not. Use a plot and/or table with a proper label.
+-->
+
+
+
+# Discussion
+<!--
+What are the implications of the study? What are possible explanations if the results do not align with your hypothesis? Any suggestions for future studies?
+-->
+
+
+
+### For your information
+<!--
+Some example code for different plots. Below is only for your information. Submit your report after removing this section.
+-->
+
+```{r}
+# the built-in R data set named ToothGrowth:
+# data from a study evaluating the effect of Vitamin C on tooth growth in Guinea pigs.
+# The experiment has been performed on 60 pigs, where each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC). Tooth length was measured and a sample of the data is shown below
+my_data = ToothGrowth
+str(my_data)
+
+# Convert dose as a factor and recode the levels
+# as D0.5, D1, D2
+my_data$dose <- factor(my_data$dose,
+                       levels = c(0.5, 1, 2),
+                       labels = c("D0.5", "D1", "D2"))
+head(my_data)
+
+# frequency table:
+table(my_data$supp, my_data$dose)
+```
+
+
+```{r}
+# Line plots with multiple groups
+# plot tooth length ("len") by groups ("dose")
+# color box plot by a second group: "supp"
+# add error bars: mean_se
+library(ggpubr)
+ggline(my_data, x = "dose", y = "len", color = "supp",
+       add = c("mean_se", "dotplot"),
+       palette = c("#00AFBB", "#E7B800"))
+
+# OR
+# using R base graphs:
+boxplot(len ~ supp * dose, data = my_data, frame = FALSE,
+        col = c("#00AFBB", "#E7B800"), ylab = "Tooth Length")
+
+# Another example: Two-way interaction plot
+interaction.plot(x.factor = my_data$dose, trace.factor = my_data$supp, 
+                 # x.factor: the factor to be plotted on x axis
+                 # trace.factor: the factor to be plotted as lines
+                 # response: a numeric variable giving the response
+                 response = my_data$len, fun = mean,
+                 # type: the type of plot (p: point, l: line, b: both point and line)
+                 type = "b", legend = TRUE,
+                 xlab = "Dose", ylab = "Tooth Length",
+                 pch = c(1, 19), col = c("#00AFBB", "#E7B800"))
+```
+
