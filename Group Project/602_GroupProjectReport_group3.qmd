@@ -61,7 +61,7 @@ library(stringr)
 library(ggplot2) 
 
 
-exp_data <- read_csv("fa24_g3.csv")
+exp_data <- read.csv("fa24_g3.csv")
 
 
 
@@ -147,11 +147,12 @@ exp_data_coded <- exp_data |>
                      "Very confident" = 5,
                      "Fully confident" = 7,
                      "Extremely confident" = 6))
+
 ```
 
 
-```   {r}
-
+```{r}
+#closeness vs dv1
 interaction.plot(x.factor = exp_data_coded$IV_rank,
                  trace.factor = exp_data_coded$IV_closeness,
                  response = exp_data_coded$dv1,
@@ -162,7 +163,7 @@ interaction.plot(x.factor = exp_data_coded$IV_rank,
                  lty = 1:2,
                  ylim = c(1,7))
 
-
+#closeness vs dv2
 interaction.plot(x.factor = exp_data_coded$IV_rank,
                  trace.factor = exp_data_coded$IV_closeness,
                  response = exp_data_coded$dv2,
@@ -173,6 +174,7 @@ interaction.plot(x.factor = exp_data_coded$IV_rank,
                  lty = 1:2,
                  ylim = c(1,7))
 
+#closeness vs dv3
 interaction.plot(x.factor = exp_data_coded$IV_rank,
                  trace.factor = exp_data_coded$IV_closeness,
                  response = exp_data_coded$dv3,
@@ -183,6 +185,41 @@ interaction.plot(x.factor = exp_data_coded$IV_rank,
                  lty = 1:2,
                  ylim = c(1,7))
 
+
+
+#rank vs dv1
+interaction.plot(x.factor = exp_data_coded$IV_closeness,
+                 trace.factor = exp_data_coded$IV_rank,
+                 response = exp_data_coded$dv1,
+                 xlab = "IV closeness",
+                 ylab = "Mean DV1",
+                 trace.label = "IV rank",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
+
+
+#rank vs dv2
+interaction.plot(x.factor = exp_data_coded$IV_closeness,
+                 trace.factor = exp_data_coded$IV_rank,
+                 response = exp_data_coded$dv2,
+                 xlab = "IV closeness",
+                 ylab = "Mean DV2",
+                 trace.label = "IV rank",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
+
+#rank vs dv3
+interaction.plot(x.factor = exp_data_coded$IV_closeness,
+                 trace.factor = exp_data_coded$IV_rank,
+                 response = exp_data_coded$dv3,
+                 xlab = "IV closeness",
+                 ylab = "Mean DV3",
+                 trace.label = "IV rank",
+                 col = c("red", "blue"),
+                 lty = 1:2,
+                 ylim = c(1,7))
 ```
 
 
