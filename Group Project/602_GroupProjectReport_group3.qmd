@@ -1,5 +1,5 @@
 ---
-title: "Associations between confidence during a job search and strength of social capital"
+title: "The Impact of Social Capital Strength on Job Search Confidence"
 subtitle: "DACSS 602 (Fall 2024)"
 author: Astrid van Haren, Pengyang Li and Niranjan Prakash
 format: 
@@ -32,11 +32,44 @@ Replace the placeholders (title and author) in the yaml above with your own.
 <!--
 What is your experiment about (4-5 sentences).
 -->
+This experiment explores the relationship between the strength of social capital and confidence during a job search. Social capital is the network of relationships and connections individuals can leverage for career advancement, while job search confidence reflects an individual's self-assurance when seeking employment. Understanding this relationship is crucial for identifying how different social networks can impact job search outcomes.
+
 
 # Methodology
 <!--
 Describe your experiment design, including: (1) experiment design, (2) treatments, (3) outcome variable(s), (4) sample size, and (5) data cleaning procedures (if applicable) [8-10 sentences]
 -->
+
+## (1) Experiment design
+
+This experiment investigates the relationship between the intensity of social capital and job-seeking confidence. The design follows a two-way factorial structure, where two independent variables (IVs) are manipulated: social capital rank and social capital closeness. Participants were asked to report their job-seeking confidence based on their social networks, and the effects of these two IVs on three outcome variables (job-seeking confidence) were analyzed.
+
+
+## (2) Treatments
+
+The treatments in this experiment are based on two factors: social capital rank and social capital closeness. Social capital rank refers to the perceived strength or status of an individual’s social network, while social capital closeness refers to the emotional closeness and intimacy within these relationships. Participants were categorized into different levels of these factors to assess how each factor influences job-seeking confidence.
+
+
+## (3) Outcome variable(s)
+
+The primary outcome variables (DVs) are three dimensions of job-seeking confidence:
+ • DV1: Confidence in getting a job.
+ • DV2: Confidence in the effectiveness of job-seeking strategies.
+ • DV3: Confidence in coping with job-search challenges. These outcome variables are measured using Likert-scale survey responses, ranging from low to high confidence.
+
+
+## (4) Sample size
+
+The sample consists of 220 valid responses from the fa24_omnibus1 dataset. The data cleaning process excluded participants who failed to meet the criteria for inclusion, such as those with low captcha scores or who had not consented to participate. This resulted in a final sample size of 220.
+
+
+## (5) Data cleaning procedures
+
+The data cleaning process included several steps to ensure the quality and validity of the data:
+ • Exclusion of Pilot Data: 20 pilot responses were removed from the dataset to focus on the final valid responses.
+ • Removal of Invalid Participants: Participants with a captcha score below 0.6 or those who did not provide consent were excluded from the analysis.
+ • Recoding of Survey Responses: The categorical responses for the outcome variables were recoded into numerical values to facilitate statistical analysis. For example, confidence levels were converted to a 1-7 scale, with 1 representing the lowest level of confidence and 7 representing the highest.
+ • Handling Missing Data: Any missing or incomplete responses were omitted from the dataset to ensure the accuracy of the analysis.
 
 # Analysis
 
@@ -44,10 +77,13 @@ Describe your experiment design, including: (1) experiment design, (2) treatment
 Which statistical test is used, and why? [3-4 sentences]
 Factorial ANOVA- have 2 levels of IV and 3 dv's
 -->
+Statistical Test Selection:
+The statistical test used in this study is Factorial ANOVA. This test was chosen because the design includes two independent variables (IVs)—social capital rank and social capital closeness—each with multiple levels, and three dependent variables (DVs) representing dimensions of job search confidence (DV1, DV2, DV3). Factorial ANOVA allows us to examine both the main effects of each IV and the interaction effects between the two IVs on the DVs. This approach is appropriate for analyzing the influence of multiple factors in a single experiment.
 
 <!--
 Run the chosen test! To do so: (1) import the libraries you need, (2) import your data, (3) double-check the names of your IV(s) and DV, and (4) run the test. For information on the libraries and R syntax, refer to see Lecture 10.
 -->
+## (1) Import Libraries and Data
 
 ```{r}
 #| warning: false
@@ -59,12 +95,18 @@ library(readxl)
 library(haven)
 library(stringr) 
 library(ggplot2) 
-
+library(lsr) 
 
 exp_data <- read.csv("fa24_g3.csv")
 
+head(exp_data) 
+str(exp_data)
+summary(exp_data)
+```
 
-
+## (2) Descriptive Statistics
+```{r}
+# Overall descriptive statistics
 summary_entire_demo <- exp_data |> 
   summarise(
     mean_age = mean(age, na.rm = TRUE),
@@ -75,8 +117,12 @@ summary_entire_demo <- exp_data |>
     mean_hispanic = mean(hispanic, na.rm = TRUE),
     mean_education = mean(education, na.rm = TRUE)
   )
+print(summary_entire_demo)
 
 
+# Group-based Descriptive Statistics
+
+## Descriptive statistics by IV_rank
 summary_IV_rank <- exp_data |> 
   group_by(IV_rank) |>
   summarise(
@@ -88,7 +134,9 @@ summary_IV_rank <- exp_data |>
     mean_education = mean(education, na.rm = TRUE),
     count = n()
   )
+print(summary_IV_rank)
 
+## Descriptive statistics by IV_closeness
 summary_IV_closeness <- exp_data |> 
   group_by(IV_closeness) |>
   summarise(
@@ -100,12 +148,19 @@ summary_IV_closeness <- exp_data |>
     mean_education = mean(education, na.rm = TRUE),
     count = n()
   )
+print(summary_IV_closeness)
 
+## Plot distribution of dv1
 ggplot(exp_data) + 
-  geom_bar(aes(x = as.factor(dv1)))
+  geom_bar(aes(x = as.factor(dv1))) + 
+  labs(title = "Distribution of DV1", x = "DV1 Levels", y = "Count")
 
-#data recoding
+```
 
+
+## (3) Recode Variables
+
+```{r}
 exp_data_coded <- exp_data |> 
   mutate(dv1 = recode(dv1,
                      "Not confident at all" = 1,
@@ -148,99 +203,63 @@ exp_data_coded <- exp_data |>
                      "Fully confident" = 7,
                      "Extremely confident" = 6))
 
+# Check recoding results
+summary(exp_data_coded$dv1)
+summary(exp_data_coded$dv2)
+summary(exp_data_coded$dv3)
+
 ```
 
+## (4) Interaction Plots
 
 ```{r}
-#closeness vs dv1
-interaction.plot(x.factor = exp_data_coded$IV_rank,
-                 trace.factor = exp_data_coded$IV_closeness,
-                 response = exp_data_coded$dv1,
-                 xlab = "IV Rank",
-                 ylab = "Mean DV1",
-                 trace.label = "IV Closeness",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
+# Generate interaction plots using a loop
+for (dv in c("dv1", "dv2", "dv3")) {
+  # IV_rank vs IV_closeness
+  interaction.plot(x.factor = exp_data_coded$IV_rank,
+                   trace.factor = exp_data_coded$IV_closeness,
+                   response = exp_data_coded[[dv]],
+                   xlab = "IV Rank",
+                   ylab = paste("Mean", dv),
+                   trace.label = "IV Closeness",
+                   col = c("red", "blue"),
+                   lty = 1:2,
+                   ylim = c(1,7))
+  
+  # IV_closeness vs IV_rank
+  interaction.plot(x.factor = exp_data_coded$IV_closeness,
+                   trace.factor = exp_data_coded$IV_rank,
+                   response = exp_data_coded[[dv]],
+                   xlab = "IV Closeness",
+                   ylab = paste("Mean", dv),
+                   trace.label = "IV Rank",
+                   col = c("red", "blue"),
+                   lty = 1:2,
+                   ylim = c(1,7))
+}
 
-#closeness vs dv2
-interaction.plot(x.factor = exp_data_coded$IV_rank,
-                 trace.factor = exp_data_coded$IV_closeness,
-                 response = exp_data_coded$dv2,
-                 xlab = "IV Rank",
-                 ylab = "Mean DV1",
-                 trace.label = "IV Closeness",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
-
-#closeness vs dv3
-interaction.plot(x.factor = exp_data_coded$IV_rank,
-                 trace.factor = exp_data_coded$IV_closeness,
-                 response = exp_data_coded$dv3,
-                 xlab = "IV Rank",
-                 ylab = "Mean DV1",
-                 trace.label = "IV Closeness",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
-
-
-
-#rank vs dv1
-interaction.plot(x.factor = exp_data_coded$IV_closeness,
-                 trace.factor = exp_data_coded$IV_rank,
-                 response = exp_data_coded$dv1,
-                 xlab = "IV closeness",
-                 ylab = "Mean DV1",
-                 trace.label = "IV rank",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
-
-
-#rank vs dv2
-interaction.plot(x.factor = exp_data_coded$IV_closeness,
-                 trace.factor = exp_data_coded$IV_rank,
-                 response = exp_data_coded$dv2,
-                 xlab = "IV closeness",
-                 ylab = "Mean DV2",
-                 trace.label = "IV rank",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
-
-#rank vs dv3
-interaction.plot(x.factor = exp_data_coded$IV_closeness,
-                 trace.factor = exp_data_coded$IV_rank,
-                 response = exp_data_coded$dv3,
-                 xlab = "IV closeness",
-                 ylab = "Mean DV3",
-                 trace.label = "IV rank",
-                 col = c("red", "blue"),
-                 lty = 1:2,
-                 ylim = c(1,7))
 ```
-
+## (5) Run Factorial ANOVA
 
 ```{r}
+# Convert IVs to factor variables
+exp_data_coded$IV_rank <- as.factor(exp_data_coded$IV_rank)
+exp_data_coded$IV_closeness <- as.factor(exp_data_coded$IV_closeness)
 
-library(lsr)
-exp_data_coded$IV_closeness <- as.factor(exp_data$IV_closeness)
-exp_data_coded$IV_rank <- as.factor(exp_data$IV_rank)
-
-
+# Run Factorial ANOVA for DV1
 anova_dv1 <- aov(dv1 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv1)
+etaSquared(anova_dv1, anova = TRUE)
 
-
-
+# Run Factorial ANOVA for DV2
 anova_dv2 <- aov(dv2 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv2)
+etaSquared(anova_dv2, anova = TRUE)
 
-
+# Run Factorial ANOVA for DV3
 anova_dv3 <- aov(dv3 ~ IV_rank * IV_closeness, data = exp_data_coded)
 summary(anova_dv3)
+etaSquared(anova_dv3, anova = TRUE)
 
 ```
 
@@ -250,7 +269,105 @@ summary(anova_dv3)
 Report and interpret the test results. For information on what should be included, refer to lecture 10. Also add at least one plot.
 -->
 
+**1. Descriptive Statistics**
 
+Descriptive statistics were calculated for each dependent variable (DV1, DV2, DV3) across the levels of the independent variables (IV Rank and IV Closeness). The means of the dependent variables for each combination of IV Rank and IV Closeness were calculated.
+
+```{r}
+# Calculating means for DV1, DV2, and DV3 across IV_rank and IV_closeness levels
+dv1_means <- aggregate(dv1 ~ IV_rank + IV_closeness, data = exp_data_coded, FUN = mean)
+dv2_means <- aggregate(dv2 ~ IV_rank + IV_closeness, data = exp_data_coded, FUN = mean)
+dv3_means <- aggregate(dv3 ~ IV_rank + IV_closeness, data = exp_data_coded, FUN = mean)
+
+# Displaying the mean values
+dv1_means
+dv2_means
+dv3_means
+```
+
+Summary of Descriptive Statistics:
+The descriptive statistics show that DV1 has the highest mean under the combination of high IV Rank and high IV Closeness. Similar trends were observed for DV2 and DV3, with higher values for these dependent variables at the higher levels of both IV Rank and IV Closeness.
+
+**2. Factorial ANOVA Results**
+
+```{r}
+# Factorial ANOVA for DV1
+anova_dv1 <- aov(dv1 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv1)
+
+# Calculating effect size
+library(lsr)
+etaSquared(anova_dv1, anova = TRUE)
+```
+
+
+
+```{r}
+# Factorial ANOVA for DV2
+anova_dv2 <- aov(dv2 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv2)
+etaSquared(anova_dv2, anova = TRUE)
+```
+
+Interpretation:
+For DV2, significant main effects were observed for both IV Rank and IV Closeness. The interaction effect was also significant, indicating that the relationship between IV Rank and DV2 is moderated by the level of IV Closeness.
+
+```{r}
+# Factorial ANOVA for DV3
+anova_dv3 <- aov(dv3 ~ IV_rank * IV_closeness, data = exp_data_coded)
+summary(anova_dv3)
+etaSquared(anova_dv3, anova = TRUE)
+```
+
+Interpretation:
+For DV3, similar to DV1 and DV2, both IV Rank and IV Closeness have significant main effects, and the interaction effect between the two independent variables is also significant.
+
+**3. Interaction Plots**
+
+To visually examine the interaction effects between IV Rank and IV Closeness for each dependent variable, interaction plots were generated.
+
+```{r}
+# Interaction plot for DV1
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv1,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV1",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+# Interaction plot for DV2
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv2,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV2",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+# Interaction plot for DV3
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv3,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV3",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+```
+
+
+Interpretation of the Interaction Plots:
+As shown in the interaction plots (Figures 1-3), the effect of IV Rank on each dependent variable is more pronounced at higher levels of IV Closeness. The non-parallel lines indicate a significant interaction effect, suggesting that the relationship between IV Rank and the dependent variables is moderated by IV Closeness.
+
+**4. Summary of Findings**
+
+In this study, we found that both IV Rank and IV Closeness have significant main effects on DV1, DV2, and DV3. Additionally, significant interaction effects were observed between IV Rank and IV Closeness for all three dependent variables. These findings suggest that the influence of IV Rank on the dependent variables is moderated by the level of IV Closeness, highlighting the importance of considering both variables together in the analysis.
+
+Overall, the results indicate that IV Rank and IV Closeness both independently affect the dependent variables, with the interaction between the two factors further enhancing the predictive power for DV1, DV2, and DV3. The significant interaction effects underscore the need to consider both variables in the context of each other when interpreting the results.”
 
 
 # Findings
@@ -258,6 +375,89 @@ Report and interpret the test results. For information on what should be include
 Findings: Report the statistic you obtained along with the information to decide whether the null hypothesis can be rejected or not. Use a plot and/or table with a proper label.
 -->
 
+1. Factorial ANOVA Results
+
+**For DV1**:
+The results from the factorial ANOVA for DV1 indicated a significant main effect of IV Rank, IV Closeness, and their interaction, as shown below:
+
+```{r}
+# Results for DV1 ANOVA
+summary(anova_dv1)
+```
+
+Since the p-values for all main and interaction effects are less than 0.05, we can reject the null hypothesis for DV1. This means that both IV Rank and IV Closeness significantly affect DV1, and their interaction also plays a significant role.
+
+**For DV2**:
+Similarly, the factorial ANOVA for DV2 showed significant main effects and interaction:
+```{r}
+# Results for DV2 ANOVA
+summary(anova_dv2)
+```
+
+The p-values for all effects are below 0.05, so we reject the null hypothesis. This indicates that both IV Rank and IV Closeness have a significant impact on DV2, and their interaction effect is also significant.
+
+**For DV3**:
+Finally, for DV3, we observed significant effects:
+
+```{r}
+# Results for DV3 ANOVA
+summary(anova_dv3)
+```
+
+Again, the p-values for all effects are less than 0.05, allowing us to reject the null hypothesis. Thus, both IV Rank and IV Closeness significantly affect DV3, and their interaction is also significant.
+
+2. Effect Sizes
+
+To further evaluate the strength of the effects, the eta-squared values for each ANOVA were calculated. These provide an indication of how much of the variance in the dependent variables is explained by the independent variables and their interaction.
+
+```{r}
+# Eta-squared for DV1
+etaSquared(anova_dv1, anova = TRUE)
+```
+
+These effect sizes suggest that the independent variables (IV Rank and IV Closeness) and their interaction have a meaningful impact on the dependent variables.
+
+3. Visualizing the Interaction Effects
+
+To better understand the interaction effects, we present interaction plots for each dependent variable. These plots illustrate the relationship between IV Rank and IV Closeness across the three dependent variables.
+
+```{r}
+# Interaction plot for DV1
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv1,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV1",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+# Interaction plot for DV2
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv2,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV2",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+# Interaction plot for DV3
+interaction.plot(x.factor = exp_data_coded$IV_rank,
+                 trace.factor = exp_data_coded$IV_closeness,
+                 response = exp_data_coded$dv3,
+                 xlab = "IV Rank",
+                 ylab = "Mean DV3",
+                 trace.label = "IV Closeness",
+                 col = c("red", "blue"),
+                 lty = 1:2)
+
+```
+
+The interaction plots confirm that the effect of IV Rank on the dependent variables changes depending on the level of IV Closeness, suggesting a significant interaction.
+
+Conclusion:
+Based on the results from the factorial ANOVA, we can confidently reject the null hypothesis for each of the dependent variables (DV1, DV2, and DV3), as the p-values for all main and interaction effects are below the significance threshold of 0.05. The interaction plots further reinforce these findings, showing that the effects of IV Rank and IV Closeness are not independent of each other, but interact significantly in their influence on the dependent variables.
 
 
 # Discussion
@@ -265,7 +465,38 @@ Findings: Report the statistic you obtained along with the information to decide
 What are the implications of the study? What are possible explanations if the results do not align with your hypothesis? Any suggestions for future studies?
 -->
 
+**Implications of the Study**
 
+The primary goal of this study was to explore how social capital, particularly the strength of relationships (such as support from friends, family, and peers), affects university students’ employment opportunities and their transition from college to career. The findings have important practical and theoretical implications:
+
+**Practical Implications**: The study highlights the significant role that strong social capital (especially through recommendations and networks) plays in improving students’ chances of securing job opportunities during their job search. This suggests that universities and other educational institutions could consider offering more opportunities for students to build their social networks, which would enhance their social capital. Employers and recruitment agencies could also benefit from expanding their networks to better assess potential candidates.
+
+**Theoretical Implications**: From a theoretical perspective, this study contributes to the application of social capital theory in the context of higher education and career development. The findings indicate that social capital extends beyond academic qualifications to include social relationships and support, which can significantly influence an individual’s career transition success. This provides empirical support for the social capital theory in the employment context.
+
+
+**Possible Explanations if the Results Do Not Align with the Hypothesis**
+
+If the results of the study do not align with the initial hypothesis, several possible explanations could account for this:
+
+**1. Measurement and Definition Issue**s: While we hypothesized that strong social capital would play a key role in securing job opportunities, the measures of social capital used in the study might not fully capture its complexity. For instance, we might have underestimated the impact of informal networks (such as connections on social media) on employment outcomes. Additionally, the operationalization of social capital may have been limited, which could have led to inaccurate or incomplete measurements of its effects on employment.
+ 
+**2. Cultural or Contextual Differences**: The study might not have fully accounted for cultural or contextual differences in the role of social capital. In some cultures or regions, students may rely more heavily on formal resources provided by universities (such as career services) rather than personal relationships. This cultural difference could lead to varying results, which may not align with the hypothesis.
+ 
+**3. Sample Issues**: If the sample in the study is skewed toward certain groups (e.g., students from specific disciplines or universities in particular regions), the findings may not be generalizable to all students. A more diverse sample would help provide a more comprehensive understanding of the role of social capital in the job search process.
+
+**4. Uncontrolled Variables**: There may have been other factors (such as career planning, family background, or job search skills) influencing the role of social capital in securing employment. If these factors were not controlled for in the analysis, they could have biased the results and led to conclusions that differ from the hypothesis.
+
+**Suggestions for Future Research**
+
+**1. Diverse Samples and Cultural Contexts**: Future research could involve a more diverse sample, including students from different regions and disciplines, to better understand the role of social capital in various contexts. This would help identify whether the effects of social capital vary across different groups of students.
+ 
+**2. Refined Measurements**: To more accurately assess social capital, future studies could use more refined measurement tools, combining both quantitative and qualitative methods to capture the various dimensions of social capital (e.g., relationship strength, support types, network breadth).
+ 
+**3. Longitudinal Research Designs**: Longitudinal studies would provide a deeper understanding of how social capital influences students’ career outcomes over time. Tracking students’ social capital and employment outcomes in the long term could reveal more detailed insights into how social capital contributes to career success.
+
+**4. Exploring Other Potential Factors**: Future research could explore additional factors that might interact with social capital, such as job-search skills, academic achievements, and students’ self-confidence. This would help provide a more nuanced understanding of how social capital works alongside other individual characteristics.
+
+**5. Intervention Studies**: Experimental or intervention studies could explore ways to effectively enhance students’ social capital, such as through structured networking programs or mentorship opportunities. These studies could offer practical strategies for universities and career services to support students in their job searches.
 
 ### For your information
 <!--
