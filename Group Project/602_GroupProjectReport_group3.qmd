@@ -4,27 +4,10 @@ subtitle: "DACSS 602 (Fall 2024)"
 author: Astrid van Haren, Pengyang Li and Niranjan Prakash
 format: 
   html:
-    toc: true
-    toc-depth: 2
-    toc-title: Contents
-    toc-location: left
-    html-math-method: katex
-    theme: flatly
-    smooth-scroll: true
-    link-external-icon: true
-    link-external-newwindow: true
-    citations-hover: true
-    footnotes-hover: true
-    font-size: 80%
+    df-print: paged
+    embed-resources: true
+    self-contained-math: true
 ---
-
-<!--
-ATTENTION: Please submit both your .qmd file and the corresponding ".html" file after rendering.
--->
-
-<!--
-Replace the placeholders (title and author) in the yaml above with your own.
--->
 
 
 # Introduction
@@ -496,55 +479,4 @@ If the results of the study do not align with the initial hypothesis, several po
 **4. Exploring Other Potential Factors**: Future research could explore additional factors that might interact with social capital, such as job-search skills, academic achievements, and students’ self-confidence. This would help provide a more nuanced understanding of how social capital works alongside other individual characteristics.
 
 **5. Intervention Studies**: Experimental or intervention studies could explore ways to effectively enhance students’ social capital, such as through structured networking programs or mentorship opportunities. These studies could offer practical strategies for universities and career services to support students in their job searches.
-
-### For your information
-<!--
-Some example code for different plots. Below is only for your information. Submit your report after removing this section.
--->
-
-```{r}
-# the built-in R data set named ToothGrowth:
-# data from a study evaluating the effect of Vitamin C on tooth growth in Guinea pigs.
-# The experiment has been performed on 60 pigs, where each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC). Tooth length was measured and a sample of the data is shown below
-my_data = ToothGrowth
-str(my_data)
-
-# Convert dose as a factor and recode the levels
-# as D0.5, D1, D2
-my_data$dose <- factor(my_data$dose,
-                       levels = c(0.5, 1, 2),
-                       labels = c("D0.5", "D1", "D2"))
-head(my_data)
-
-# frequency table:
-table(my_data$supp, my_data$dose)
-```
-
-
-```{r}
-# Line plots with multiple groups
-# plot tooth length ("len") by groups ("dose")
-# color box plot by a second group: "supp"
-# add error bars: mean_se
-library(ggpubr)
-ggline(my_data, x = "dose", y = "len", color = "supp",
-       add = c("mean_se", "dotplot"),
-       palette = c("#00AFBB", "#E7B800"))
-
-# OR
-# using R base graphs:
-boxplot(len ~ supp * dose, data = my_data, frame = FALSE,
-        col = c("#00AFBB", "#E7B800"), ylab = "Tooth Length")
-
-# Another example: Two-way interaction plot
-interaction.plot(x.factor = my_data$dose, trace.factor = my_data$supp, 
-                 # x.factor: the factor to be plotted on x axis
-                 # trace.factor: the factor to be plotted as lines
-                 # response: a numeric variable giving the response
-                 response = my_data$len, fun = mean,
-                 # type: the type of plot (p: point, l: line, b: both point and line)
-                 type = "b", legend = TRUE,
-                 xlab = "Dose", ylab = "Tooth Length",
-                 pch = c(1, 19), col = c("#00AFBB", "#E7B800"))
-```
 
