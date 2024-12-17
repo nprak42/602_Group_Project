@@ -22,7 +22,6 @@ format:
 ATTENTION: Please submit both your .qmd file and the corresponding ".html" file after rendering.
 -->
 
-
 <!--
 Replace the placeholders (title and author) in the yaml above with your own.
 -->
