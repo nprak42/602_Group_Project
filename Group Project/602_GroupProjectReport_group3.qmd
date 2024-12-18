@@ -14,7 +14,7 @@ format:
 <!--
 What is your experiment about (4-5 sentences).
 -->
-This experiment explores the relationship between the strength of social capital and confidence during a job search. Social capital is the network of relationships and connections individuals can leverage for career advancement, while job search confidence reflects an individual's self-assurance when seeking employment. Understanding this relationship is crucial for identifying how different social networks can impact job search outcomes.
+This experiment explores the relationship between the strength of social capital and perceived confidence during a job search. Social capital is the network of relationships and connections individuals can leverage for career advancement, while job search confidence reflects an individual's self-assurance when seeking employment. Understanding this relationship is crucial for identifying how different social networks can impact job search outcomes.
 
 
 # Methodology
@@ -24,7 +24,7 @@ Describe your experiment design, including: (1) experiment design, (2) treatment
 
 ## (1) Experiment design
 
-This experiment investigates the relationship between the intensity of social capital and job-seeking confidence. The design follows a two-way factorial structure, where two independent variables (IVs) are manipulated: social capital rank and social capital closeness. Participants were asked to report their job-seeking confidence based on their social networks, and the effects of these two IVs on three outcome variables (job-seeking confidence) were analyzed.
+This experiment investigates the relationship between the intensity of social capital and job-seeking confidence. The design follows a two-way factorial structure, where two independent variables (IVs) are manipulated: social captial by rank and social capital by closeness of association. Participants were asked to report their  confidence during a job application process based on their social networks, and the effects of these two IVs on three outcome variables (job-seeking confidence) were analyzed.
 
 
 ## (2) Treatments
@@ -35,9 +35,9 @@ The treatments in this experiment are based on two factors: social capital rank 
 ## (3) Outcome variable(s)
 
 The primary outcome variables (DVs) are three dimensions of job-seeking confidence:
- • DV1: Confidence in getting a job.
+ • DV1: Confidence in strength of recommendation letter.
  • DV2: Confidence in the effectiveness of job-seeking strategies.
- • DV3: Confidence in coping with job-search challenges. These outcome variables are measured using Likert-scale survey responses, ranging from low to high confidence.
+ • DV3: Confidence that the recommendation letter is an accurate representation of their ability. These outcome variables are measured using Likert-scale survey responses, ranging from low to high confidence.
 
 
 ## (4) Sample size
@@ -135,7 +135,12 @@ print(summary_IV_closeness)
 ## Plot distribution of dv1
 ggplot(exp_data) + 
   geom_bar(aes(x = as.factor(dv1))) + 
-  labs(title = "Distribution of DV1", x = "DV1 Levels", y = "Count")
+  labs(
+    title = "Distribution of Confidence in Strength of Recommendation Letter to Secure a Job", 
+    x = "DV1 Levels", 
+    y = "Count"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
